@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bored API Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        button { margin: 0.5em 0; padding: 0.5em 1em; background-color: #D5f3fe; margin-color: #21e98b; }
+        ul { margin-top: 1em; }
+    </style>
+</head>
+<body>
+    <h1>Bored API Demo</h1>
+    <button id="randomBtn">Obtener actividad aleatoria</button>
+    <ul id="randomList"></ul>
+
+    <h2>Filtrar por categoría</h2>
+    <select id="categorySelect">
+        <option value="education">Educación</option>
+        <option value="recreational">Recreativo</option>
+        <option value="social">Social</option>
+        <option value="charity">Caridad</option>
+        <option value="cooking">Cocina</option>
+        <option value="relaxation">Relajación</option>
+        <option value="music">Música</option>
+        <option value="busywork">Trabajo</option>
+    </select>
+    <button id="filterBtn">Filtrar</button>
+    <ul id="filterList"></ul>
+
+    <script>
+        document.getElementById('randomBtn').addEventListener('click', async () => {
+            const res = await fetch('https://corsproxy.io/?https://bored-api.appbrewery.com/random');
+            const data = await res.json(); // <--- te faltaba esto
+            const list = document.getElementById('randomList');
+            list.innerHTML = `<li>${data.activity} (${data.type})</li>`;
+        });
+
+
+        document.getElementById('filterBtn').addEventListener('click', async () => {
+            const category = document.getElementById('categorySelect').value;
+            const res = await fetch(`https://corsproxy.io/?https://bored-api.appbrewery.com/filter?type=${category}`);
+            const data = await res.json();
+            const list = document.getElementById('filterList');
+            list.innerHTML = '';
+            if (Array.isArray(data)) {
+                data.forEach(item => {
+                    list.innerHTML += `<li>${item.activity} (${item.type})</li>`;
+                });
+            } else {
+                list.innerHTML = '<li>No hay actividades para esta categoría.</li>';
+            }
+        });
+
+    </script>
+</body>
+</html>
